@@ -1,357 +1,231 @@
-Here is the single `index.html` file that serves as the entry point for your "Cyberpunk Hospital" landing page.
+import React, { useState } from 'react';
+import { 
+  Activity, ArrowRight, ShieldCheck, Heart, Eye, Lock, 
+  Smartphone, Database, MousePointer2, Shield, Info,
+  ChevronRight, Users, Clock, AlertCircle
+} from 'lucide-react';
 
-In this file, I have inlined both the **CSS (styles)** and the **JavaScript (logic)** into the main document. This creates a "portable," zero-dependency project where all the elements—the layout, the "Neon" assets, and the interaction script—are self-contained. You do not need any additional folders or files (like `src/`, `js/`, or `assets/`) for this landing page to work immediately.
+const App = () => {
+  // Navigation state (to simulate moving to the prototype)
+  const [showDemoMenu, setShowDemoMenu] = useState(false);
 
-### Installation Instructions:
+  // --- UI Components for the Homepage ---
 
-1.  Create a folder on your computer named `cyber-hospital`.
-2.  Inside that folder, create a new file and name it exactly: `index.html`.
-3.  Copy the entire code block below and paste it into that file.
-4.  Save the file.
-5.  Double-click `index.html` to open it in your web browser.
-
-***
-
-### File: `index.html`
-
-```html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEO-KYOTO REGENESIS - Cybernetic Care</title>
-    
-    <style>
-        :root {
-            /* CYBERPUNK COLOR PALETTE */
-            --bg-dark: #050509; /* Deep space black */
-            --bg-panel: #0a0a14; /* Dark blue/gray panels */
-            --neon-blue: #00f2fe; /* Primary electric cyan */
-            --neon-blue-dim: rgba(0, 242, 254, 0.2);
-            --neon-magenta: #ff00ff; /* Secondary accent */
-            --text-main: #c4d9eb; /* Bright, cool-gray text */
-            --text-muted: #627c94;
-            --alert-red: #ff3333;
-            
-            /* GLOBAL SETTINGS */
-            --font-stack: 'Courier New', Courier, monospace; /* Monospaced "terminal" font */
-        }
-
-        /* ---------------------------------- */
-        /* RESET & BASE STYLES                */
-        /* ---------------------------------- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            font-family: var(--font-stack);
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        /* Scanline Overlay (Classic Cyberpunk visual CRT effect) */
-        body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            z-index: 9999;
-            pointer-events: none; /* Let clicks pass through */
-        }
-
-        /* ---------------------------------- */
-        /* LAYOUT COMPONENTS                  */
-        /* ---------------------------------- */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        /* HEADER / NAV */
-        header {
-            background-color: var(--bg-panel);
-            border-bottom: 2px solid var(--neon-blue);
-            padding: 15px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 0 15px var(--neon-blue-dim);
-        }
-
-        .logo-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo-icon {
-            font-size: 2rem;
-            color: var(--neon-blue);
-            text-shadow: 0 0 10px var(--neon-blue);
-        }
-
-        .hospital-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: white;
-            text-shadow: 0 0 5px white;
-        }
-
-        .status-badge {
-            color: var(--neon-magenta);
-            border: 1px solid var(--neon-magenta);
-            padding: 4px 8px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-
-        /* HERO SECTION */
-        .hero {
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            /* Placeholder: If you had a background image asset, you'd add it here. */
-            background-image: 
-                linear-gradient(to bottom, rgba(5,5,9,0.8), rgba(5,5,9,1)),
-                repeating-linear-gradient(45deg, #0a0a14 0px, #0a0a14 2px, transparent 2px, transparent 10px);
-            border-bottom: 1px solid #1a1a2a;
-        }
-
-        .hero-content h1 {
-            font-size: 3.5rem;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            color: #fff;
-            text-shadow: 0 0 20px var(--neon-blue), 0 0 40px var(--neon-blue);
-            margin-bottom: 20px;
-        }
-
-        .hero-content p {
-            color: var(--text-muted);
-            max-width: 600px;
-            margin: 0 auto 30px auto;
-        }
-
-        /* INTERFACE ELEMENTS / BUTTONS */
-        .cyber-btn {
-            background: transparent;
-            border: 2px solid var(--neon-magenta);
-            color: var(--neon-magenta);
-            padding: 12px 30px;
-            font-family: var(--font-stack);
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-            position: relative;
-            transition: all 0.2s ease;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.3);
-        }
-
-        .cyber-btn:hover {
-            background-color: var(--neon-magenta);
-            color: white;
-            box-shadow: 0 0 25px var(--neon-magenta);
-        }
-
-        /* Grid Section (Services/Wards) */
-        .services {
-            padding: 60px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            color: var(--neon-magenta);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 40px;
-            text-shadow: 0 0 5px var(--neon-magenta);
-        }
-
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        /* Medical "Module" Card */
-        .medical-module {
-            background-color: var(--bg-panel);
-            border: 1px solid #1a1a2a;
-            padding: 25px;
-            transition: border-color 0.3s ease;
-            position: relative;
-        }
-
-        .medical-module:hover {
-            border-color: var(--neon-blue);
-        }
-
-        .module-header {
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #1a1a2a;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .module-id { color: var(--neon-blue); font-weight: bold; }
-        .module-status { color: #0f0; } /* Green for online */
-
-        .module-title {
-            color: white;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        .module-desc {
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        /* ---------------------------------- */
-        /* "ASSETS" / ICONOGRAPHY             */
-        /* (Inlined SVGs or simple characters)*/
-        /* ---------------------------------- */
-        
-        /* Simulating a flickering neon cross */
-        .neon-cross {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            position: relative;
-            color: var(--neon-blue);
-            animation: flicker 2s infinite;
-        }
-        
-        .neon-cross::before, .neon-cross::after {
-            content: '';
-            background: currentColor;
-            position: absolute;
-        }
-        
-        /* Horizontal bar */
-        .neon-cross::before {
-            top: 8px; left: 0; width: 20px; height: 4px;
-            box-shadow: 0 0 10px currentColor;
-        }
-        
-        /* Vertical bar */
-        .neon-cross::after {
-            left: 8px; top: 0; width: 4px; height: 20px;
-            box-shadow: 0 0 10px currentColor;
-        }
-
-        /* ---------------------------------- */
-        /* ANIMATIONS                         */
-        /* ---------------------------------- */
-        @keyframes flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                opacity: 1;
-                filter: drop-shadow(0 0 10px var(--neon-blue));
-            }
-            20%, 24%, 55% {
-                opacity: 0.2;
-                filter: none;
-            }
-        }
-
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="container">
-            <div class="logo-group">
-                <span class="neon-cross"></span> <span class="hospital-name">NEO-KYOTO REGENESIS</span>
-            </div>
-            <div class="status-group">
-                <span class="status-badge">CYBERNETIC WARD ONLINE</span>
-            </div>
+  const Navigation = () => (
+    <nav className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 h-20 flex justify-between items-center">
+        <div className="flex items-center gap-3">
+          <div className="bg-rose-600 p-2 rounded-xl shadow-lg shadow-rose-200">
+            <Activity className="text-white w-6 h-6" />
+          </div>
+          <span className="text-2xl font-black tracking-tighter text-slate-900">MediLink</span>
         </div>
-    </header>
-
-    <section class="hero">
-        <div class="container hero-content">
-            <p style="color: var(--neon-blue); text-transform: uppercase; margin-bottom: 10px;">> TRAUMA UNIT // ADMITTANCE 09</p>
-            <h1>HUMAN. UPGRADED.</h1>
-            <p>From full-body biosyncing to emergent neuro-repair. We repair the chrome and stitch the flesh. Welcome to the future of restorative medicine.</p>
-            <button class="cyber-btn" onclick="checkEmergencyStatus()">INITIATE ADMITTANCE SCROLL</button>
+        
+        <div className="hidden md:flex items-center gap-10 text-sm font-bold text-slate-500 uppercase tracking-widest">
+          <a href="#problem" className="hover:text-rose-600 transition-colors">The Problem</a>
+          <a href="#methodology" className="hover:text-rose-600 transition-colors">Methodology</a>
+          <a href="#framework" className="hover:text-rose-600 transition-colors">Framework</a>
         </div>
+
+        <button 
+          onClick={() => setShowDemoMenu(true)}
+          className="bg-slate-900 text-white px-6 py-2.5 rounded-full text-sm font-black hover:bg-rose-600 transition-all flex items-center gap-2 shadow-xl shadow-slate-200"
+        >
+          Launch Prototype <MousePointer2 className="w-4 h-4" />
+        </button>
+      </div>
+    </nav>
+  );
+
+  const Hero = () => (
+    <section className="relative pt-20 pb-32 overflow-hidden bg-slate-50">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+          <div className="inline-flex items-center gap-2 bg-rose-50 text-rose-600 px-4 py-2 rounded-full text-xs font-black tracking-widest border border-rose-100 uppercase">
+            <ShieldCheck className="w-3 h-3" /> UTeM Research Defense Prototype
+          </div>
+          <h1 className="text-6xl md:text-7xl font-black leading-[1.1] text-slate-900">
+            Design for the <br />
+            <span className="text-rose-600 italic">Golden Hour.</span>
+          </h1>
+          <p className="text-xl text-slate-500 leading-relaxed max-w-lg">
+            An enhanced human-centered UI/UX framework for Emergency Health Cards (EHC) in Bangladesh, reducing data retrieval time to under 5 seconds.
+          </p>
+          <div className="flex flex-wrap gap-4 pt-4">
+            <button 
+              onClick={() => setShowDemoMenu(true)}
+              className="bg-rose-600 text-white px-8 py-4 rounded-2xl font-black text-lg hover:scale-105 transition-transform flex items-center gap-3 shadow-2xl shadow-rose-200"
+            >
+              Try Prototype <ArrowRight />
+            </button>
+            <button className="bg-white border-2 border-slate-200 text-slate-900 px-8 py-4 rounded-2xl font-black text-lg hover:bg-slate-50 transition-colors">
+              Read Proposal
+            </button>
+          </div>
+        </div>
+
+        {/* Abstract Visual of the EHC Node */}
+        <div className="relative animate-in fade-in slide-in-from-right duration-1000">
+          <div className="bg-gradient-to-br from-rose-400 to-rose-600 rounded-[4rem] p-1 shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700 group">
+             <div className="bg-white rounded-[3.8rem] p-10 space-y-8">
+                <div className="flex justify-between items-start">
+                   <div className="space-y-2">
+                      <p className="text-[10px] font-black text-rose-500 uppercase tracking-widest">Active Framework</p>
+                      <h3 className="text-2xl font-black text-slate-900 tracking-tight">DEHCMsync 2.0</h3>
+                   </div>
+                   <div className="bg-slate-900 text-white p-3 rounded-2xl"><Smartphone /></div>
+                </div>
+                <div className="space-y-4">
+                   <div className="h-2 bg-slate-100 rounded-full w-full"></div>
+                   <div className="h-2 bg-slate-100 rounded-full w-2/3"></div>
+                   <div className="grid grid-cols-2 gap-4 mt-6">
+                      <div className="h-16 bg-rose-50 rounded-2xl border border-rose-100 flex items-center justify-center font-black text-rose-600 text-xs">VISUAL TRIAGE</div>
+                      <div className="h-16 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-center font-black text-slate-400 text-xs tracking-tighter uppercase">NFC Sync</div>
+                   </div>
+                </div>
+                <div className="pt-4 border-t flex justify-between items-center">
+                   <div className="flex gap-2">
+                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase">Cloud Database Connected</span>
+                   </div>
+                   <Lock className="text-slate-200 w-4 h-4" />
+                </div>
+             </div>
+          </div>
+          {/* Floating Accents */}
+          <div className="absolute -top-10 -left-10 w-24 h-24 bg-rose-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-10 -right-10 w-24 h-24 bg-indigo-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+        </div>
+      </div>
     </section>
+  );
 
-    <section class="services">
-        <div class="container">
-            <h2 class="section-title">ACTIVE MEDICAL MODULES</h2>
-            
-            <div class="services-grid">
-                
-                <article class="medical-module">
-                    <div class="module-header">
-                        <span class="module-id">RGN-01</span>
-                        <span class="module-status">[ONLINE]</span>
-                    </div>
-                    <h3 class="module-title">NEURAL INTERFACING</h3>
-                    <p class="module-desc">Full-stack repair of cortex shunts and spinal data-jacks. Re-syncing wetware with hardware.</p>
-                    <a href="#" style="color: var(--neon-blue); text-decoration: none;">> View Specs</a>
-                </article>
-
-                <article class="medical-module">
-                    <div class="module-header">
-                        <span class="module-id">RGN-02</span>
-                        <span class="module-status" style="color: var(--alert-red)">[ALERT: HIGH LOAD]</span>
-                    </div>
-                    <h3 class="module-title">BIOSYNC STABILIZATION</h3>
-                    <p class="module-desc">Organ printing and synthetic tissue grafting. Treat acute rejection syndromes immediately.</p>
-                    <a href="#" style="color: var(--neon-blue); text-decoration: none;">> Queue Status</a>
-                </article>
-
-                <article class="medical-module">
-                    <div class="module-header">
-                        <span class="module-id">RGN-03</span>
-                        <span class="module-status">[ONLINE]</span>
-                    </div>
-                    <h3 class="module-title">CYBERPSYCHOSIS WARD</h3>
-                    <p class="module-desc">Secure containment and cognitive realignment for severe implant-induced dissociation.</p>
-                    <a href="#" style="color: var(--neon-blue); text-decoration: none;">> Security Protocol</a>
-                </article>
-
-            </div>
+  const ProblemSection = () => (
+    <section id="problem" className="py-24 bg-white">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-3 gap-12">
+           <div className="lg:col-span-1 space-y-4">
+              <h2 className="text-4xl font-black text-slate-900 leading-tight">The lethal <br /><span className="text-rose-600">Socio-Technical</span> Gap.</h2>
+              <p className="text-slate-500 leading-relaxed font-medium">Our research identifies why existing digital health solutions fail in trauma scenarios within the Bangladesh healthcare ecosystem.</p>
+           </div>
+           <div className="lg:col-span-2 grid md:grid-cols-2 gap-8">
+              {[
+                { title: "The Time Crisis", icon: Clock, color: "rose", desc: "Delayed data retrieval during the Golden Hour leads to preventable fatalities in emergency wards." },
+                { title: "The Trust Paradox", icon: Shield, color: "indigo", desc: "Skepticism toward data security prevents users from adopting centralized digital health identifiers." },
+                { title: "Intimidation Gap", icon: Info, color: "amber", desc: "Complex interfaces alienate elderly and low-literacy users during high-stress medical events." },
+                { title: "Connectivity Void", icon: AlertCircle, color: "emerald", desc: "Reliant on 24/7 internet, current systems fail during rural emergencies or network outages." }
+              ].map((p, i) => (
+                <div key={i} className="p-8 rounded-[2.5rem] bg-slate-50 border border-slate-100 hover:border-rose-200 transition-all group">
+                   <div className={`w-12 h-12 bg-${p.color}-100 rounded-xl flex items-center justify-center text-${p.color}-600 mb-6 group-hover:scale-110 transition-transform`}>
+                      <p.icon size={20} />
+                   </div>
+                   <h3 className="text-xl font-bold mb-3 text-slate-900">{p.title}</h3>
+                   <p className="text-sm text-slate-500 leading-relaxed font-medium">{p.desc}</p>
+                </div>
+              ))}
+           </div>
         </div>
+      </div>
     </section>
+  );
 
-    <footer style="background-color: #010103; padding: 20px; border-top: 1px solid #1a1a2a; text-align: center;">
-        <p style="color: var(--text-muted); font-size: 0.8rem;">
-            SYSTEM v4.1 // UNIT 77 // <span style="color: var(--neon-blue);">REGENESIS CORP (c) 2077</span>
-        </p>
-    </footer>
+  const FrameworkPillars = () => (
+    <section id="methodology" className="py-24 bg-slate-900 text-white overflow-hidden relative">
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="text-center space-y-4 mb-20">
+           <h2 className="text-4xl font-black italic tracking-tight uppercase">DEHCMsync Framework Pillars</h2>
+           <div className="h-1 w-24 bg-rose-600 mx-auto"></div>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-12">
+          {[
+            { 
+              title: "Visual Triage UI", 
+              icon: Eye, 
+              desc: "A glanceable interface designed to deliver life-critical data (Blood Group, Allergies) in under 5 seconds."
+            },
+            { 
+              title: "Transparent Security", 
+              icon: Lock, 
+              desc: "Forensic access logs and visible encryption status to rebuild user trust through data transparency."
+            },
+            { 
+              title: "Offline-First Hybrid", 
+              icon: Database, 
+              desc: "NFC and QR integration allowing clinical metadata retrieval even in internet-deprived environments."
+            }
+          ].map((item, i) => (
+            <div key={i} className="space-y-6 text-center">
+              <div className="w-20 h-20 bg-slate-800 rounded-3xl mx-auto flex items-center justify-center text-rose-500 shadow-2xl border border-slate-700">
+                <item.icon size={32} />
+              </div>
+              <h3 className="text-2xl font-black italic">{item.title}</h3>
+              <p className="text-slate-400 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full opacity-5 pointer-events-none">
+         <div className="w-full h-full bg-[radial-gradient(circle,white_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      </div>
+    </section>
+  );
 
-    <script>
-        // A simple console message to confirm the file loaded successfully.
-        console.log(">> Neo-Kyoto Regenesis Medical System: Online.");
+  // --- Multi-Role Demo Switcher (Modal) ---
 
-        // Function that runs when the 'Cyber-Btn' in the Hero section is clicked.
-        function checkEmergencyStatus() {
-            // A basic browser alert, styled (crudely) by the OS.
-            // Modern sites would use a custom-styled modal, but this works for a single file.
-            alert(">> CRITICAL MESSAGE <<\n\nAdmittance queue is currently offline.\nPlease report directly to the Trauma Bay.");
-        }
-    </script>
-</body>
-</html>
-```
+  const DemoModal = () => (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/90 backdrop-blur-xl p-6">
+      <div className="max-w-4xl w-full bg-slate-800 rounded-[3rem] p-12 text-white border border-slate-700 shadow-2xl animate-in zoom-in duration-300">
+        <div className="flex justify-between items-center mb-10">
+          <h2 className="text-3xl font-black italic uppercase tracking-tighter">Choose Your Persona</h2>
+          <button onClick={() => setShowDemoMenu(false)} className="p-2 hover:bg-white/10 rounded-full"><X /></button>
+        </div>
+        
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { id: 'responder', label: 'Responder', icon: Smartphone, color: 'bg-rose-600', desc: 'Simulate field triage' },
+            { id: 'hospital', label: 'Hospital ER', icon: Stethoscope, color: 'bg-indigo-600', desc: 'Manage triage queue' },
+            { id: 'patient', label: 'Patient', icon: Heart, color: 'bg-emerald-600', desc: 'View your VitalCard' }
+          ].map(p => (
+            <button 
+              key={p.id}
+              className="bg-slate-900 p-8 rounded-[2.5rem] border border-slate-700 hover:border-white transition-all text-center flex flex-col items-center gap-4 group"
+            >
+              <div className={`${p.color} p-5 rounded-2xl group-hover:scale-110 transition-transform`}><p.icon /></div>
+              <p className="text-xl font-bold">{p.label}</p>
+              <p className="text-[10px] uppercase font-bold text-slate-500 tracking-widest leading-none">{p.desc}</p>
+            </button>
+          ))}
+        </div>
+        
+        <div className="mt-12 text-center border-t border-slate-700 pt-8">
+           <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">Powered by Real-time Cloud Database</p>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-white">
+      <Navigation />
+      <Hero />
+      <ProblemSection />
+      <FrameworkPillars />
+      
+      {/* Footer */}
+      <footer className="bg-slate-50 border-t py-12 px-6 text-center">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-6">
+          <div className="flex items-center gap-2">
+            <Activity className="text-rose-600" />
+            <span className="font-black text-xl text-slate-800">MediLink</span>
+          </div>
+          <p className="text-sm text-slate-400 font-bold uppercase tracking-[0.2em]">Research Framework 2025 • UTeM Defense</p>
+        </div>
+      </footer>
+
+      {showDemoMenu && <DemoModal />}
+    </div>
+  );
+};
+
+export default App;
